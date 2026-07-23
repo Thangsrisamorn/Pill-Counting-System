@@ -1,0 +1,64 @@
+import os
+import shutil
+import random
+
+# ==========================
+# ตั้งค่า
+# ==========================
+IMAGE_DIR = "images"       # เปลี่ยนมาใช้โฟลเดอร์รูปต้นฉบับ
+LABEL_DIR = "labels"       # โฟลเดอร์ Label
+OUTPUT_DIR = "bbox_split"
+TRAIN_RATIO = 0.8
+
+# ==========================
+# สร้าง Folder (โครงสร้างมาตรฐาน YOLO)
+# ==========================
+for split in ["train", "test"]:
+    os.makedirs(os.path.join(OUTPUT_DIR, "images", split), exist_ok=True)
+    os.makedirs(os.path.join(OUTPUT_DIR, "labels", split), exist_ok=True)
+
+# ==========================
+# อ่านรูปทั้งหมด
+# ==========================
+images = [f for f in os.listdir(IMAGE_DIR) if f.lower().endswith((".jpg", ".jpeg", ".png"))]
+print("จำนวนรูปทั้งหมด :", len(images))
+
+# ==========================
+# Shuffle & Split
+# ==========================
+random.shuffle(images)
+split_index = int(len(images) * TRAIN_RATIO)
+
+train_images = images[:split_index]
+test_images = images[split_index:]
+
+print("----------------")
+print("Train :", len(train_images))
+print("Test  :", len(test_images))
+print("----------------")
+
+# ==========================
+# Copy รูปและ Label
+# ==========================
+def copy_data(files, split_folder):
+    for img_file in files:
+        # 1. Copy รูปภาพ
+        src_img = os.path.join(IMAGE_DIR, img_file)
+        dst_img = os.path.join(OUTPUT_DIR, "images", split_folder, img_file)
+        shutil.copy(src_img, dst_img)
+
+        # 2. Copy Label (เปลี่ยนนามสกุลเป็น .txt)
+        label_file = os.path.splitext(img_file)[0] + ".txt"
+        src_label = os.path.join(LABEL_DIR, label_file)
+        dst_label = os.path.join(OUTPUT_DIR, "labels", split_folder, label_file)
+        
+        # เช็กว่ามีไฟล์ Label อยู่จริงก่อนคัดลอก
+        if os.path.exists(src_label):
+            shutil.copy(src_label, dst_label)
+        else:
+            print(f"⚠️ ไม่พบไฟล์ Label สำหรับ: {img_file}")
+
+copy_data(train_images, "train")
+copy_data(test_images, "test")
+
+print("แบ่งรูปและ Label สำเร็จ พร้อมเทรน YOLO!")

@@ -1,0 +1,7 @@
+path: ./bbox_split    # ตำแหน่งโฟลเดอร์ Dataset หลัก
+train: images/train   
+val: images/test      
+
+# เปลี่ยนจำนวนคลาสและชื่อคลาสให้ถูกต้องตามลำดับ 0, 1, 2, 3
+nc: 4
+names: ['Circle', 'Capsule', 'Oval', 'Square']
