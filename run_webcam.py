@@ -1,34 +1,28 @@
 import os
-# ปิด Hardware Acceleration เพื่อแก้ปัญหากล้องเปิดช้า
 os.environ["OPENCV_VIDEOIO_MSMF_ENABLE_HW_TRANSFORMS"] = "0"
 
 import cv2
 import numpy as np
 from ultralytics import YOLO
 
-# 1. โหลดโมเดล
 MODEL_PATH = r"D:\Project\pillwebcam\runs\detect\Pill_Project\yolov8s_four_classes_final-2\weights\best.pt"
 model = YOLO(MODEL_PATH)
 
 print("กำลังเชื่อมต่อกล้อง...")
 cap = cv2.VideoCapture(0, cv2.CAP_MSMF)
 
-# ตั้งค่าหน้าต่าง
 cv2.namedWindow("Real-time Pill Counter", cv2.WINDOW_NORMAL)
 
 while cap.isOpened():
     success, frame = cap.read()
     if not success:
-        print("❌ ไม่สามารถดึงภาพจากกล้องได้")
+        print(" ไม่สามารถดึงภาพจากกล้องได้")
         break
 
-    # 2. ให้โมเดล YOLO ทำนายผล
     results = model(frame, conf=0.5, verbose=False)
 
-    # โชว์แค่กรอบสี่เหลี่ยมเปล่าๆ (ซ่อน labels และ conf)
     annotated_frame = results[0].plot(labels=False, conf=False)
 
-    # 3. นับจำนวนเม็ดยาทั้ง 4 คลาส
     boxes = results[0].boxes
     circle_count = 0
     capsule_count = 0
@@ -45,30 +39,19 @@ while cap.isOpened():
             oval_count += 1
         elif class_id == 3:
             square_count += 1
-            
-    # คำนวณยอดรวม
+
     total_pills = circle_count + capsule_count + oval_count + square_count
             
-    # 4. 🎨 UI: แสดงเฉพาะตัวเลข Total (Dashboard มินิมอล)
     overlay = annotated_frame.copy()
-    # สร้างกล่อง Dashboard ขนาดกระทัดรัด
     cv2.rectangle(overlay, (20, 20), (200, 45), (20, 20, 20), -1)
     
-    # ทำให้โปร่งแสง
     alpha = 0.6
     cv2.addWeighted(overlay, alpha, annotated_frame, 1 - alpha, 0, annotated_frame)
     cv2.rectangle(annotated_frame, (20, 20), (200, 45), (255, 255, 255), 2)
-
-    # แสดงข้อความ Total
     cv2.putText(annotated_frame, f"Total: {total_pills}", (40, 40), 
                 cv2.FONT_HERSHEY_DUPLEX, 0.6, (255, 255, 255), 1)
-
-    # 5. แสดงผลหน้าต่าง
     cv2.imshow("Real-time Pill Counter", annotated_frame)
-    
-    # กด 'q' เพื่อหยุดการทำงาน
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
-
 cap.release()
 cv2.destroyAllWindows()
