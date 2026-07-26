@@ -9,11 +9,10 @@ for filename in os.listdir(LABEL_DIR):
 
     image_number = int(filename.split("_")[1].replace(".txt", ""))
 
-    # กำหนด class
     if image_number <= 410:
-        new_class = 0      # Circle
+        new_class = 0      
     else:
-        new_class = 1      # Capsule
+        new_class = 1      
 
     path = os.path.join(LABEL_DIR, filename)
 
