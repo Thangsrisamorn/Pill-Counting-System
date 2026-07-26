@@ -72,6 +72,4 @@ for folder_path in SOURCE_FOLDERS:
     print(f"   -> โควต้า Train: {len(train_files)} รูป")
     print(f"   -> โควต้า Test : {len(test_files)} รูป")
     print("-" * 60)
-
-print(" เสร็จสมบูรณ์! ข้อมูลถูกเทรวมกันใน bbox_split เรียบร้อยแล้ว")
-print(f"สรุปรวม Dataset ทั้งหมด: Train = {total_train} รูป | Test = {total_test} รูป")
+    print(f"สรุปรวม Dataset ทั้งหมด: Train = {total_train} รูป | Test = {total_test} รูป")
