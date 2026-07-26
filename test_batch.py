@@ -84,4 +84,4 @@ for i, img_path in enumerate(image_files):
         break
 
 cv2.destroyAllWindows()
-print("🎉 บันทึกภาพผลลัพธ์ครบทุกรูปเรียบร้อยแล้ว!")
+print("บันทึกภาพผลลัพธ์ครบทุกรูปเรียบร้อย")
