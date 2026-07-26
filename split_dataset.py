@@ -39,7 +39,7 @@ def copy_data(files, split_folder):
         if os.path.exists(src_label):
             shutil.copy(src_label, dst_label)
         else:
-            print(f"⚠️ ไม่พบไฟล์ Label สำหรับ: {img_file}")
+            print(f" ไม่พบไฟล์ Label สำหรับ: {img_file}")
 
 copy_data(train_images, "train")
 copy_data(test_images, "test")
